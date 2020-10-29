@@ -1,3 +1,10 @@
+#hashtable.py
+
+
+
+from LinkedList import LinkedList
+
+
 class HashTableEntry:
     """
     Linked List hash table key/value pair
@@ -21,7 +28,11 @@ class HashTable:
     """
 
     def __init__(self, capacity):
-        # Your code here
+        if capacity < MIN_CAPACITY:
+            capacity = MIN_CAPACITY
+        self.capacity = capacity
+        self.storage = [LinkedList()] * capacity
+        self.count = 0
 
 
     def get_num_slots(self):
@@ -34,7 +45,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        
+        return len(self.storage)
 
 
     def get_load_factor(self):
@@ -43,7 +55,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        
+        return self.count/self.capacity
 
 
     def fnv1(self, key):
@@ -62,7 +75,11 @@ class HashTable:
 
         Implement this, and/or FNV-1.
         """
-        # Your code here
+        
+        hash = 5381
+        for x in key:
+            hash = ((hash << 5) + hash) + ord(x)
+        return hash & 0xFFFFFFFF
 
 
     def hash_index(self, key):
@@ -73,6 +90,7 @@ class HashTable:
         #return self.fnv1(key) % self.capacity
         return self.djb2(key) % self.capacity
 
+
     def put(self, key, value):
         """
         Store the value with the given key.
@@ -81,7 +99,17 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        
+        my_index = self.hash_index(key)
+        curr = self.storage[my_index].head
+
+        while curr:
+            if curr.key == key:
+                curr.value == value
+            curr = curr.next
+        new_entry = HashTableEntry(key, value)
+        self.storage[my_index].insert_at_head(new_entry)
+        self.count += 1
 
 
     def delete(self, key):
@@ -92,7 +120,9 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+
+        self.put(key, None)
+        self.count -= 1
 
 
     def get(self, key):
@@ -103,7 +133,14 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        
+        my_index = self.hash_index(key)
+        curr = self.storage[my_index].head
+        while curr:
+            if curr.key == key:
+                return curr.value
+            curr = curr.next
+        return None
 
 
     def resize(self, new_capacity):
