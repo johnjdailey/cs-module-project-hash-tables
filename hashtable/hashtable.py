@@ -150,8 +150,17 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-
+        
+        if self.get_load_factor() > 0.7:
+            old_storage = self.storage
+            self.storage = [LinkedList()] * new_capacity
+            
+            for i in old_storage:
+                curr = i.head
+                while curr:
+                    self.put(curr.key, curr.value)
+                    curr = curr.next
+            self.capacity = new_capacity
 
 
 if __name__ == "__main__":
